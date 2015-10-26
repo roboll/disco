@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -100,7 +99,7 @@ func (p *rte53) SyncRecord(instances []*string) error {
 				log.Println("sleeping for 10s")
 				time.Sleep(10 * time.Second)
 			} else {
-				os.Exit(0)
+				return nil
 			}
 		}
 	} else {
