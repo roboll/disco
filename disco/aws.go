@@ -42,10 +42,21 @@ func (c *AmazonConfig) validate() error {
 	return nil
 }
 
-func (p *amazon) GetInstanceName() (string, error) {
+func (p *amazon) GetInstanceValue() (string, error) {
 	if len(p.c.Region) == 0 {
 		meta := ec2metadata.New(&ec2metadata.Config{})
-		return meta.GetMetadata("local-hostname")
+		switch p.c.ValueType {
+		case TypePrivateIP:
+			return meta.GetMetadata("local-ipv4")
+		case TypePublicIP:
+			return meta.GetMetadata("public-ipv4")
+		case TypePrivateHostname:
+			return meta.GetMetadata("local-hostname")
+		case TypePublicHostname:
+			return meta.GetMetadata("public-hostname")
+		default:
+			return "", errors.New("invalid ValueType")
+		}
 	}
 	return "", errors.New("failed to get instance name")
 }

@@ -75,17 +75,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	instanceName, err := as.GetInstanceName()
+	instanceVal, err := as.GetInstanceValue()
 	if err != nil {
-		//log.Fatal(err)
+		log.Fatal(err)
 	}
-	content := "ETCD_NAME=" + instanceName + "\nETCD_DISCOVERY_SRV=" + domain
+	content := "ETCD_NAME=" + instanceVal + "\nETCD_DISCOVERY_SRV=" + domain
 	if ssl {
-		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=https://" + instanceName + ":2380"
-		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=https://" + instanceName + ":2379"
+		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=https://" + instanceVal + ":2380"
+		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=https://" + instanceVal + ":2379"
 	} else {
-		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=http://" + instanceName + ":2380"
-		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=http://" + instanceName + ":2379"
+		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=http://" + instanceVal + ":2380"
+		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=http://" + instanceVal + ":2379"
 	}
 
 	log.Printf("writing etcd options to %s\n", file)
