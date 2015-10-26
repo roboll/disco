@@ -42,6 +42,14 @@ func (c *AmazonConfig) validate() error {
 	return nil
 }
 
+func (p *amazon) GetInstanceName() (string, error) {
+	if len(p.c.Region) == 0 {
+		meta := ec2metadata.New(&ec2metadata.Config{})
+		return meta.GetMetadata("local-hostname")
+	}
+	return "", errors.New("failed to get instance name")
+}
+
 func (p *amazon) GetInstances() ([]*string, error) {
 	region, err := p.getRegion()
 	if err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -19,6 +20,8 @@ var region string
 var group string
 var valueType string
 
+var file string
+
 func init() {
 	flag.StringVar(&zone, "zone", "", "hosted zone id")
 	flag.StringVar(&domain, "domain", "etcd.local", "domain name")
@@ -30,6 +33,8 @@ func init() {
 	flag.StringVar(&region, "region", "", "aws region")
 	flag.StringVar(&group, "group", "", "autoscaling group")
 	flag.StringVar(&valueType, "value-type", "", "value type - one of private-ip, public-ip, private-dns, public-dns")
+
+	flag.StringVar(&file, "file", "/etc/disco/etcd-discovery", "output file - environment file with etcd props")
 }
 
 func main() {
@@ -69,5 +74,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	instanceName, err := as.GetInstanceName()
+	if err != nil {
+		//log.Fatal(err)
+	}
+	content := "ETCD_NAME=" + instanceName + "\nETCD_DISCOVERY_SRV=" + domain
+	if ssl {
+		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=https://" + instanceName + ":2380"
+		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=https://" + instanceName + ":2379"
+	} else {
+		content = content + "\nETCD_INITIAL_ADVERTISE_PEER_URLS=http://" + instanceName + ":2380"
+		content = content + "\nETCD_ADVERTISE_CLIENT_URLS=http://" + instanceName + ":2379"
+	}
+
+	log.Printf("writing etcd options to %s\n", file)
+	err = ioutil.WriteFile(file, []byte(content), os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	os.Exit(0)
 }

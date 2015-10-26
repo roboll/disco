@@ -4,6 +4,7 @@ import "errors"
 
 type AutoscaleProvider interface {
 	GetInstances() ([]*string, error)
+	GetInstanceName() (string, error)
 }
 
 type AutoscaleConfig struct {
