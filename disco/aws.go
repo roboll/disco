@@ -39,9 +39,6 @@ func AmazonProvider(c *AmazonConfig) (AutoscaleProvider, error) {
 }
 
 func (c *AmazonConfig) validate() error {
-	if len(c.GroupName) == 0 {
-		return errors.New("GroupName is required")
-	}
 	return nil
 }
 
@@ -49,6 +46,14 @@ func (p *amazon) GetInstances() ([]*string, error) {
 	region, err := p.getRegion()
 	if err != nil {
 		return nil, err
+	}
+
+	if len(p.c.GroupName) == 0 {
+		lg, err := p.getLocalInstanceAutoscaleGroup()
+		if err != nil {
+			return nil, err
+		}
+		p.c.GroupName = *lg
 	}
 
 	as := autoscaling.New(&aws.Config{
