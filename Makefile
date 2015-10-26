@@ -17,7 +17,7 @@ PRE_RELEASE := tag clean-repo test
 .PHONY:  build docker release
 build:   disco-linux-amd64 #docs.tar.gz
 docker:  build docker-build-root
-release: $(PRE_RELEASE) docker docker-push-root #gh-release-docs.tar.gz
+release: $(PRE_RELEASE) docker docker-push-root gh-release-disco-linux-amd64
 
 ###############################################################################
 # pre-release - test and validation
