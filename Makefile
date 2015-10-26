@@ -17,7 +17,7 @@ PRE_RELEASE := tag clean-repo test
 .PHONY:  build docker release
 build:   disco-linux-amd64 #docs.tar.gz
 docker:  build docker-build-root
-release: $(PRE_RELEASE) docker docker-push-root gh-release-disco-linux-amd64
+release: $(PRE_RELEASE) docker docker-push-root disco-linux-amd64-gh-release
 
 ###############################################################################
 # pre-release - test and validation
@@ -57,7 +57,7 @@ create-gh-release: $(GH_RELEASE) tag clean-repo gh-token
 	@echo Creating Github Release
 	$(GH_RELEASE) release --user $(OWNER) --repo $(REPO) --tag $(VERSION)
 
-gh-release-%: $(GH_RELEASE) tag clean-repo gh-token create-gh-release
+%-gh-release: $(GH_RELEASE) tag clean-repo gh-token create-gh-release
 	@echo Uploading Release Artifact $* to Github
 	$(GH_RELEASE) upload --user $(OWNER) --repo $(REPO) --tag $(VERSION) \
 		--name $* --file $*
