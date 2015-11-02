@@ -80,7 +80,12 @@ func (p *rte53) SyncRecord(instances []*string) error {
 
 	result, err := client.ChangeResourceRecordSets(&change)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("got an error, will retry in 10s. %s", err)
+		time.Sleep(10 * time.Second)
+		result, err = client.ChangeResourceRecordSets(&change)
+		if err != nil {
+			log.Fatalf("received second error, failing. %s", err)
+		}
 	}
 
 	log.Println("dns change submitted")
